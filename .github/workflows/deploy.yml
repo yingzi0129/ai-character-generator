@@ -22,11 +22,19 @@ jobs:
 
       - name: Build
         run: |
-          ./node_modules/.bin/next build || npx next build
+          ./node_modules/.bin/next build 2>&1 | tee build.log
         env:
           NODE_OPTIONS: '--max-old-space-size=4096'
 
+      - name: Upload build log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build.log
+
       - name: Deploy to Cloudflare Workers
+        if: success()
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
