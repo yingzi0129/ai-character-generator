@@ -39,14 +39,11 @@ export default function Navbar() {
 
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center gap-4">
-          <Link href="#" className="text-base font-medium text-[#1A1A1A] hover:text-[#666666] transition-colors">
-            Log in
-          </Link>
           <Link
             href="#"
             className="bg-[#FF6B53] text-white px-5 py-2.5 rounded-md text-base font-semibold hover:bg-[#E55A4F] transition-colors"
           >
-            Sign Up
+            Log in
           </Link>
         </div>
 
@@ -81,9 +78,8 @@ export default function Navbar() {
           <Link href="/blog" className="text-base font-medium text-[#666666]">Blog</Link>
           <Link href="/about" className="text-base font-medium text-[#666666]">About</Link>
           <hr className="border-[#F0EAE1]" />
-          <Link href="#" className="text-base font-medium text-[#1A1A1A]">Log in</Link>
           <Link href="#" className="bg-[#FF6B53] text-white px-5 py-2.5 rounded-md text-base font-semibold text-center">
-            Sign Up
+            Log in
           </Link>
         </div>
       </div>
