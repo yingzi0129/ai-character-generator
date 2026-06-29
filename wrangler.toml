@@ -3,10 +3,7 @@ main = "src/index.js"
 compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
 
-# Static site configuration - using Workers Sites
-[[kv_namespaces]]
-binding = "__STATIC_CONTENT"
-id = "a1851a65e8394b29b6453f11178baaa8"
-
+# Workers Sites uploads ./dist and automatically provides the __STATIC_CONTENT binding.
+# Do not declare a separate KV binding with the same name, or deploy fails with code 10053.
 [site]
 bucket = "./dist"
