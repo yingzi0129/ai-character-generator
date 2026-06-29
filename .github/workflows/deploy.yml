@@ -21,19 +21,24 @@ jobs:
         run: npm install
 
       - name: Build
-        run: ./node_modules/.bin/next build
+        run: |
+          ./node_modules/.bin/next build 2>&1 | tee build.log
+          if [ ${PIPESTATUS[0]} -ne 0 ]; then
+            echo "::error::Build failed"
+            cat build.log >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
         env:
           NODE_OPTIONS: '--max-old-space-size=4096'
 
       - name: Deploy to Cloudflare Workers
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          command: deploy --verbose 2>&1 | tee deploy.log
-
-      - name: Upload deploy log
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: deploy-log
-          path: deploy.log
+        if: success()
+        run: |
+          npx wrangler deploy --verbose 2>&1 | tee deploy.log
+          if [ ${PIPESTATUS[0]} -ne 0 ]; then
+            echo "::error::Deploy failed"
+            cat deploy.log >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
