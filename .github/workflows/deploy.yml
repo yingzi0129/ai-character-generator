@@ -17,22 +17,12 @@ jobs:
           node-version: 20
           cache: 'npm'
 
-      - name: Debug environment
-        run: |
-          node -v
-          npm -v
-          ls -la
-          cat package.json
-
       - name: Install dependencies
-        run: npm ci
-        env:
-          NODE_OPTIONS: '--max-old-space-size=4096'
+        run: npm install
 
       - name: Build
         run: |
-          ls -la node_modules/.bin/next || true
-          npx next build
+          ./node_modules/.bin/next build || npx next build
         env:
           NODE_OPTIONS: '--max-old-space-size=4096'
 
