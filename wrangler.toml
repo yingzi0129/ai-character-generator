@@ -7,3 +7,8 @@ compatibility_flags = ["nodejs_compat"]
 # Do not declare a separate KV binding with the same name, or deploy fails with code 10053.
 [site]
 bucket = "./dist"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "ai-character-generator-db"
+database_id = "135c0101-581d-48aa-b671-a88bca057e0f"

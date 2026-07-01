@@ -1,7 +1,63 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+function AuthButton({ mobile = false }: { mobile?: boolean }) {
+  const [user, setUser] = useState<{
+    email: string;
+    name: string;
+    avatar: string;
+  } | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/auth/me", { credentials: "same-origin" })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.loggedIn) {
+          setUser(data.user);
+        }
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
+
+  const baseClass = mobile
+    ? "bg-[#FF6B53] text-white px-5 py-2.5 rounded-md text-base font-semibold text-center"
+    : "bg-[#FF6B53] text-white px-5 py-2.5 rounded-md text-base font-semibold hover:bg-[#E55A4F] transition-colors";
+
+  if (loading) {
+    return <div className={`${baseClass} opacity-60`}>Loading...</div>;
+  }
+
+  if (user) {
+    return (
+      <div className="flex items-center gap-3">
+        {user.avatar ? (
+          <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full" />
+        ) : null}
+        <span className="text-sm font-medium text-[#1A1A1A] hidden lg:inline">{user.name || user.email}</span>
+        <button
+          onClick={() => {
+            fetch("/api/auth/logout", { credentials: "same-origin" }).then(() => {
+              window.location.href = "/";
+            });
+          }}
+          className="bg-[#FF6B53] text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-[#E55A4F] transition-colors"
+        >
+          Log out
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <a href="/api/auth/google" className={baseClass}>
+      Log in
+    </a>
+  );
+}
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -39,12 +95,7 @@ export default function Navbar() {
 
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center gap-4">
-          <Link
-            href="#"
-            className="bg-[#FF6B53] text-white px-5 py-2.5 rounded-md text-base font-semibold hover:bg-[#E55A4F] transition-colors"
-          >
-            Log in
-          </Link>
+          <AuthButton />
         </div>
 
         {/* Mobile Menu Button */}
@@ -78,9 +129,7 @@ export default function Navbar() {
           <Link href="/blog" className="text-base font-medium text-[#666666]">Blog</Link>
           <Link href="/about" className="text-base font-medium text-[#666666]">About</Link>
           <hr className="border-[#F0EAE1]" />
-          <Link href="#" className="bg-[#FF6B53] text-white px-5 py-2.5 rounded-md text-base font-semibold text-center">
-            Log in
-          </Link>
+          <AuthButton mobile />
         </div>
       </div>
       )}
